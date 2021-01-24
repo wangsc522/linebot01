@@ -1,0 +1,972 @@
+redis筆記
+操作指令
+當成串列：LPUSH, RPUSH, LSET, LRANGE
+當成值：get,set
+變數有效期限多少秒：Expire value 1
+INCR, DECR：針對某個 key 加一或減一的意思
+INCRBY 與 DECRBY，可以指定你要加減的數量
+
+HSET, HGET：H 就是 Hashmap 的意思，所以你可以存取一個 value 底下的 field
+redis> HSET mydata name "nick"
+redis> HSET mydata nickname "nicknick"
+redis> HGET mydata name
+"nick"
+
+SADD, SCARD：SADD 的 S 就是 Set 的意思，這邊的 Set 指的是資料結構學過的那個 Set，裡面不會有重複的內容。
+redis> SADD myset "nick"
+redis> SADD myset "peter"
+redis> SADD myset "nick"
+redis> SCARD myset
+(integer) 2
+
+DEL key
+此命令刪除一個指定鍵(如果存在)。
+
+DUMP key
+此命令返回存儲在指定鍵的值的序列化版本。
+
+EXISTS key
+此命令檢查鍵是否存在。
+
+EXPIRE key seconds
+設置鍵在指定時間秒數之後到期/過期。
+
+EXPIREAT key timestamp
+設置在指定時間戳之後鍵到期/過期。這裏的時間是Unix時間戳格式。
+
+PEXPIRE key milliseconds
+設置鍵的到期時間(以毫秒?單位)。
+
+PEXPIREAT key milliseconds-timestamp
+以Unix時間戳形式來設置鍵的到期時間(以毫秒?單位)。
+
+KEYS pattern
+查找與指定模式匹配的所有鍵。
+
+MOVE key db
+將鍵移動到另一個數據庫。
+
+PERSIST key
+刪除指定鍵的過期時間，得永生。
+
+PTTL key
+獲取鍵的剩餘到期時間。
+
+RANDOMKEY
+從Redis返回一個隨機的鍵。
+
+RENAME key newkey
+更改鍵的名稱。
+
+PTTL key
+獲取鍵到期的剩餘時間(以毫秒?單位)。
+
+RENAMENX key newkey
+如果新鍵不存在，重命名鍵。
+
+TYPE key
+返回存儲在鍵中的值的數據類型。
+
+
+設定
+CONFIG GET *
+
+
+測試
+ping
+
+
+1
+
+SET key value
+
+此命令設置指定鍵的值。
+
+2
+
+GET key
+
+獲取指定鍵的值。
+
+3
+
+GETRANGE key start end
+
+獲取存儲在鍵上的字符串的子字符串。
+
+4
+
+GETSET key value
+
+設置鍵的字符串值並返回其舊值。
+
+5
+
+GETBIT key offset
+
+返回在鍵處存儲的字符串值中偏移處的位值。
+
+6
+
+MGET key1 [key2..]
+
+獲取所有給定鍵的值
+
+7
+
+SETBIT key offset value
+
+存儲在鍵上的字符串值中設置或清除偏移處的位
+
+8
+
+SETEX key seconds value
+
+使用鍵和到期時間來設置值
+
+9
+
+SETNX key value
+
+設置鍵的值，僅當鍵不存在時
+
+10
+
+SETRANGE key offset value
+
+在指定偏移處開始的鍵處覆蓋字符串的一部分
+
+11
+
+STRLEN key
+
+獲取存儲在鍵中的值的長度
+
+12
+
+MSET key value [key value …]
+
+?多個鍵分別設置它們的值
+
+13
+
+MSETNX key value [key value …]
+
+?多個鍵分別設置它們的值，僅當鍵不存在時
+
+14
+
+PSETEX key milliseconds value
+
+設置鍵的值和到期時間(以毫秒?單位)
+
+15
+
+INCR key
+
+將鍵的整數值增加1
+
+16
+
+INCRBY key increment
+
+將鍵的整數值按給定的數值增加
+
+17
+
+INCRBYFLOAT key increment
+
+將鍵的浮點值按給定的數值增加
+
+18
+
+DECR key
+
+將鍵的整數值減1
+
+19
+
+DECRBY key decrement
+
+按給定數值減少鍵的整數值
+
+20
+
+APPEND key value
+
+將指定值附加到鍵
+
+7. Redis哈希
+Redis Hashes是字符串字段和字符串值之間的映射(類似於PHP中的數組類型)。 因此，它們是表示對象的完美數據類型。
+
+在Redis中，每個哈希(散列)可以存儲多達4億個鍵-值對。
+
+示例
+redis 127.0.0.1:6379> HMSET myhash name "redis tutorial" 
+description "redis basic commands for caching" likes 20 visitors 23000 
+OK 
+127.0.0.1:6379> HGETALL myhash
+1) "field1"
+2) "Hello"
+3) "field2"
+4) "World"
+5) "name"
+6) "redis tutorial"
+在上面的例子中，在名稱?’myhash‘的哈希中設置了Redis教程的詳細信息(名稱，描述，喜歡，訪問者)。
+
+8. Redis列表
+Redis列表只是字符串列表，按插入順序排序。可以在列表的頭部或尾部添加Redis列表中的元素。
+
+列表的最大長度?2^32 - 1個元素(即4294967295，每個列表可存儲超過40億個元素)。
+
+示例
+redis 127.0.0.1:6379> LPUSH mylist "redis" 
+(integer) 1 
+redis 127.0.0.1:6379> LPUSH mylist "mongodb"
+(integer) 2 
+redis 127.0.0.1:6379> LPUSH mylist "mysql"
+(integer) 3 
+redis 127.0.0.1:6379> LRANGE mylist 0 10  
+1) "mysql" 
+2) "mongodb" 
+3) "redis"
+在上面的示例中，通過命令LPUSH將三個值插入到名稱?「mylist」的Redis列表中。
+
+8. Redis集合
+Redis集合是唯一字符串的無序集合。 唯一值表示集合中不允許鍵中有重複的數據。
+
+在Redis中設置添加，刪除和測試成員的存在(恆定時間O(1)，而不考慮集合中包含的元素數量)。列表的最大長度?2^32 - 1個元素(即4294967295，每組集合超過40億個元素)。
+
+示例
+redis 127.0.0.1:6379> SADD myset "redis" 
+(integer) 1 
+redis 127.0.0.1:6379> SADD myset "mongodb" 
+(integer) 1 
+redis 127.0.0.1:6379> SADD myset "mysql" 
+(integer) 1 
+redis 127.0.0.1:6379> SADD myset "mysql" 
+(integer) 0 
+redis 127.0.0.1:6379> SMEMBERS "myset"  
+1) "mysql" 
+2) "mongodb" 
+3) "redis"
+在上面的示例中，通過命令SADD將三個值插入到名稱?「myset」的Redis集合中。
+
+9. Redis發送訂閱
+Redis發佈訂閱(pub/sub)是一種消息通信模式：發送者(pub)發送消息，訂閱者(sub)接收消息。
+Redis 發佈訂閱(pub/sub)實現了消息系統，發送者(在redis術語中稱?發佈者)在接收者(訂閱者)接收消息時發送消息。傳送消息的鏈路稱?信道。
+
+在Redis中，客戶端可以訂閱任意數量的信道。
+
+示例
+以下示例說明了發佈用戶概念的工作原理。 在以下示例中，一個客戶端訂閱名?「redisChat」的信道。
+
+redis 127.0.0.1:6379> SUBSCRIBE redisChat  
+Reading messages... (press Ctrl-C to quit) 
+1) "subscribe" 
+2) "redisChat" 
+3) (integer) 1
+現在，兩個客戶端在名稱?「redisChat」的相同信道上發佈消息，並且上述訂閱的客戶端接收消息。
+
+redis 127.0.0.1:6379> PUBLISH redisChat "Redis is a great caching technique"  
+(integer) 1  
+redis 127.0.0.1:6379> PUBLISH redisChat "Learn redis by yiibai"  
+(integer) 1   
+1) "message" 
+2) "redisChat" 
+3) "Redis is a great caching technique" 
+1) "message" 
+2) "redisChat" 
+3) "Learn redis by yiibai"
+10. Redis事務
+Redis事務允許在單個步驟中執行一組命令。以下是事務的兩個屬性：
+
+事務中的所有命令作?單個隔離操作並按順序執行。不可以在執行Redis事務的中間向另一個客戶端發出的請求。
+Redis事務也是原子的。原子意味?要麼處理所有命令，要麼都不處理。
+語法示例
+Redis事務由命令MULTI命令?動，然後需要傳遞一個應該在事務中執行的命令列表，然後整個事務由EXEC命令執行。
+
+redis 127.0.0.1:6379> MULTI 
+OK 
+List of commands here 
+redis 127.0.0.1:6379> EXEC
+示例
+以下示例說明了如何?動和執行Redis事務。
+
+redis 127.0.0.1:6379> MULTI 
+OK 
+redis 127.0.0.1:6379> SET mykey "redis" 
+QUEUED 
+redis 127.0.0.1:6379> GET mykey 
+QUEUED 
+redis 127.0.0.1:6379> INCR visitors 
+QUEUED 
+redis 127.0.0.1:6379> EXEC  
+1) OK 
+2) "redis" 
+3) (integer) 1
+11. Redis腳本
+Redis腳本用於使用Lua解釋器來執行腳本。從Redis 2.6.0版開始內置到Redis中。使用腳本的命令是EVAL命令。
+
+語法
+以下是EVAL命令的基本語法。
+
+redis 127.0.0.1:6379> EVAL script numkeys key [key ...] arg [arg ...]
+示例
+以下示例說明了Redis腳本的工作原理。
+
+redis 127.0.0.1:6379> EVAL "return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}" 2 key1 
+key2 first second  
+1) "key1" 
+2) "key2" 
+3) "first" 
+4) "second"
+12. Redis連接
+Redis中的連接命令基本上是用於管理與Redis服務器的客戶端連接。
+
+示例
+以下示例說明客戶端如何向Redis服務器驗證自身，並檢查服務器是否正在運行。
+
+redis 127.0.0.1:6379> AUTH "password" 
+OK 
+redis 127.0.0.1:6379> PING 
+PONG
+Redis連接命令
+下表列出了與Redis連接相關的一些基本命令。
+
+序號
+
+命令
+
+說明
+
+1
+
+AUTH password
+
+使用給定的密碼驗證服務器
+
+2
+
+ECHO message
+
+打印給定的字符串信息
+
+3
+
+PING
+
+檢查服務器是否正在運行
+
+4
+
+QUIT
+
+關閉當前連接
+
+5
+
+SELECT index
+
+更改當前連接的所選數據庫
+
+13. Redis服務器
+Redis服務器命令基本上是用於管理Redis服務器。
+
+示例
+以下示例說明了如何獲取有關服務器的所有統計信息和信息。
+
+127.0.0.1:6379> info
+# Server
+redis_version:2.8.4
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:8f6097d7914679ca
+redis_mode:standalone
+os:Linux 3.19.0-25-generic i686
+arch_bits:32
+multiplexing_api:epoll
+gcc_version:4.8.2
+process_id:1004
+run_id:1e53acea2aa628199c4e438a3ed815d96eebc036
+tcp_port:6379
+uptime_in_seconds:888450
+uptime_in_days:10
+hz:10
+lru_clock:1861984
+config_file:/etc/redis/redis.conf
+
+# Clients
+connected_clients:1
+client_longest_output_list:0
+client_biggest_input_buf:0
+blocked_clients:0
+
+# Memory
+used_memory:424872
+used_memory_human:414.91K
+used_memory_rss:6709248
+used_memory_peak:424464
+used_memory_peak_human:414.52K
+used_memory_lua:22528
+mem_fragmentation_ratio:15.79
+mem_allocator:jemalloc-3.4.1
+
+# Persistence
+loading:0
+rdb_changes_since_last_save:0
+rdb_bgsave_in_progress:0
+rdb_last_save_time:1486607123
+rdb_last_bgsave_status:ok
+rdb_last_bgsave_time_sec:0
+rdb_current_bgsave_time_sec:-1
+aof_enabled:0
+aof_rewrite_in_progress:0
+aof_rewrite_scheduled:0
+aof_last_rewrite_time_sec:-1
+aof_current_rewrite_time_sec:-1
+aof_last_bgrewrite_status:ok
+
+# Stats
+total_connections_received:1
+total_commands_processed:263
+instantaneous_ops_per_sec:0
+rejected_connections:0
+sync_full:0
+sync_partial_ok:0
+sync_partial_err:0
+expired_keys:0
+evicted_keys:0
+keyspace_hits:257
+keyspace_misses:0
+pubsub_channels:0
+pubsub_patterns:0
+latest_fork_usec:4793
+
+# Replication
+role:master
+connected_slaves:0
+master_repl_offset:0
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+
+# CPU
+used_cpu_sys:24.65
+used_cpu_user:15.84
+used_cpu_sys_children:0.08
+used_cpu_user_children:0.00
+
+# Keyspace
+db0:keys=14,expires=0,avg_ttl=0
+db1:keys=1,expires=0,avg_ttl=0
+127.0.0.1:6379>
+14. Redis備份
+Redis數據庫可以使用安全的方案，使得進行連接的任何客戶端在執行命令之前都需要進行身份驗證。要保護Redis安全，需要在配置文件中設置密碼。
+
+示例
+下面的示例顯示了保護Redis實例的步驟。
+
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) ""
+默認情況下，此屬性?空，這表示還沒有?此實例設置密碼。您可以通過執行以下命令更改此屬性。
+
+127.0.0.1:6379> CONFIG set requirepass "yiibai" 
+OK 
+127.0.0.1:6379> CONFIG get requirepass 
+1) "requirepass" 
+2) "yiibai"
+設置密碼後，如果任何客戶端運行命令而不進行身份驗證，則會返回一個**(error) NOAUTH Authentication required.**的錯誤信息。 因此，客戶端需要使用AUTH命令來驗證。
+
+語法
+以下是AUTH命令的基本語法。
+
+127.0.0.1:6379> AUTH password
+示例
+127.0.0.1:6379> AUTH "yiibai" 
+OK 
+127.0.0.1:6379> SET mykey "Test value" 
+OK 
+127.0.0.1:6379> GET mykey 
+"Test value"
+15. Redis客戶端連接
+Redis在配置的監聽TCP端口和Unix套接字上等待和接受客戶端的連接(如果已?用)。 當接受新的客戶端連接時，執行以下操作 -
+
+由於Redis使用複用和非阻塞I/O，因此客戶端套接字處於非阻塞狀態。
+設置TCP_NODELAY選項是?了確保連接不延遲。
+創建可讀文件事件，以便Redis能夠在套接字上讀取新數據時收集客戶端查詢。
+最大客戶數
+在Redis配置文件(redis.conf)中，有一個名稱?maxclients的屬性，它描述了可以連接到Redis的客戶端的最大數量。
+
+以下是命令的基本語法。
+
+127.0.0.1:6379> config get maxclients
+1) "maxclients"
+2) "3984"
+默認情況下，此屬性設置?10000(取決於操作系統的文件描述符限制的最大數量)，但您可以更改此屬性。
+
+示例
+在以下示例中，我們已將客戶端的最大數目設置?100000，並?動服務器。
+
+yiibai@ubuntu:~$ redis-server --maxclients 100000
+客戶端命令
+編號
+
+命令
+
+描述
+
+1
+
+CLIENT LIST
+
+返回連接到Redis服務器的客戶端列表
+
+2
+
+CLIENT SETNAME
+
+?當前連接分配/設置新的名稱
+
+3
+
+CLIENT GETNAME
+
+返回由CLIENT SETNAME設置的當前連接的名稱
+
+4
+
+CLIENT PAUSE
+
+這是一個連接控制命令，能夠將所有Redis客戶端按指定的時間量(以毫秒?單位)掛起
+
+5
+
+CLIENT KILL
+
+此命令關閉指定的客戶端連接。
+
+16. Redis管道
+Redis是一個TCP服務器，支持請求/響應協議。 在Redis中，請求通過以下步驟完成：
+
+客戶端向服務器發送查詢，並從套接字讀取，通常以阻塞的方式，用於服務器響應。
+服務器處理命令並將響應發送回客戶端。
+管道的意義
+管道的基本含義是，客戶端可以向服務器發送多個請求，而不必等待回覆，並最終在一個步驟中讀取回復。
+
+示例
+要檢查Redis管道，只需?動Redis實例，並在終端中鍵入以下命令。
+
+$(echo -en "PING\r\n SET tutorial redis\r\nGET tutorial\r\nINCR 
+visitor\r\nINCR visitor\r\nINCR visitor\r\n"; sleep 10) | nc localhost 6379  
++PONG 
++OK 
+redis 
+:1 
+:2 
+:3
+在上面的例子中，我們將使用PING命令檢查Redis連接。這裏設置了一個名稱?tutorial的字符串，值?redis。 然後得到鍵值，並增加 visitor 數量三次。 在結果中，我們可以看到所有命令都提交到Redis一次，Redis在一個步驟中提供所有命令的輸出。
+
+管道的好處
+這種技術的好處是大大提高了協議性能。通過管道從連接到本地主機速度增加五倍，因特網連接的至少快一百倍。
+
+17. Redis分區
+分區是將數據拆分?多個Redis實例的過程，因此每個實例只包含一部分鍵。
+
+分區的優點
+它允許更大的數據庫，使用更多計算機的內存總和。如果沒有分區，則限制?單個計算機可以支持的內存量。
+它允許將計算能力擴展到多個核心和多個計算機，並將網絡帶寬擴展到多個計算機和網絡適配器。
+分區的缺點
+通常不支持涉及多個鍵的操作。 例如，如果兩個集合存儲在映射到不同Redis實例的鍵中，則不能執行兩個集合之間的交集操作。
+不能使用涉及多個鍵的Redis事務。
+分區粒度是關鍵，因此不可能使用單個巨大的鍵(如非常大的排序集合)來分割數據集。
+使用分區時，數據處理更復雜。 例如，必須處理多個RDB/AOF文件，並獲得數據的備份，您需要聚合來自多個實例和主機的持久性文件。
+添加和刪除容量可能很複雜。 例如，Redis Cluster支持大多數透明的數據重新平衡，具有在運行時添加和刪除節點的能力。但是，其他系統(如客戶端分區和代理)不支持此功能。但可以使用一種叫作Presharding的技術來處理這方面的問題。
+分區類型
+Redis中有兩種類型的分區。假設有四個Redis實例：R0，R1，R2，R3以許多代表用戶的鍵，如user：1，user：2，…等等。
+
+範圍分區
+範圍分區通過將對象的範圍映射到特定的Redis實例來實現。假設在上面示例中，從ID 0到ID 10000的用戶將進入實例R0，而從ID 10001到ID 20000的用戶將進入實例R1，以此類推。
+
+哈希分區
+在這種類型的分區中，使用散列函數(例如，模函數)將鍵轉換成數字，然後將數據存儲在不同的Redis實例中。
+
+18. Java連接Redis
+在Java程序中使用Redis之前，需要確保在機器上安裝了Redis的Java驅動程序和Java環境。可以先在將Java電腦上並配置好環境。
+
+安裝
+現在，讓我們看看如何設置Redis Java驅動程序。
+
+下載jedis.jar - http://repo1.maven.org/maven2/redis/clients/jedis/2.1.0/jedis-2.1.0-sources.jar ，確保下載的jedis.jar是最新版本。
+將jedis.jar包含到類路徑中。
+Java連接到Redis服務器
+請參考以下一個簡單的示例代碼 -
+
+import redis.clients.jedis.Jedis; 
+
+public class RedisJava { 
+   public static void main(String[] args) { 
+      //Connecting to Redis server on localhost 
+      Jedis jedis = new Jedis("localhost"); 
+      System.out.println("Connection to server sucessfully"); 
+      //check whether server is running or not 
+      System.out.println("Server is running: "+jedis.ping()); 
+   } 
+}
+現在，編譯並運行上面的程序來測試與Redis服務器的連接。可以根據需要更改路徑。假設jedis.jar的當前版本在當前路徑中可以使用。
+執行上面代碼，將生成以下結果 -
+
+$javac RedisJava.java 
+$java RedisJava 
+Connection to server sucessfully 
+Server is running: PONG
+Redis Java字符串示例
+import redis.clients.jedis.Jedis; 
+
+public class RedisStringJava { 
+   public static void main(String[] args) { 
+      //Connecting to Redis server on localhost 
+      Jedis jedis = new Jedis("localhost"); 
+      System.out.println("Connection to server sucessfully"); 
+      //set the data in redis string 
+      jedis.set("tutorial-name", "Redis tutorial"); 
+      // Get the stored data and print it 
+      System.out.println("Stored string in redis:: "+ jedis.get("tutorialname")); 
+   } 
+}
+執行上面代碼，將生成以下結果 -
+
+$javac RedisStringJava.java 
+$java RedisStringJava 
+Connection to server sucessfully 
+Stored string in redis:: Redis tutorial
+Redis Java列表示例
+import redis.clients.jedis.Jedis; 
+
+public class RedisListJava { 
+   public static void main(String[] args) { 
+      //Connecting to Redis server on localhost 
+      Jedis jedis = new Jedis("localhost"); 
+      System.out.println("Connection to server sucessfully"); 
+
+      //store data in redis list 
+      jedis.lpush("tutorial-list", "Redis"); 
+      jedis.lpush("tutorial-list", "Mongodb"); 
+      jedis.lpush("tutorial-list", "Mysql"); 
+      // Get the stored data and print it 
+      List<String> list = jedis.lrange("tutorial-list", 0 ,5); 
+
+      for(int i = 0; i<list.size(); i++) { 
+         System.out.println("Stored string in redis:: "+list.get(i)); 
+      } 
+   } 
+}
+執行上面代碼，將生成以下結果 -
+
+$javac RedisListJava.java 
+$java RedisListJava 
+Connection to server sucessfully 
+Stored string in redis:: Redis 
+Stored string in redis:: Mongodb 
+Stored string in redis:: Mysql
+Redis Java鍵示例
+import redis.clients.jedis.Jedis; 
+
+public class RedisKeyJava { 
+   public static void main(String[] args) { 
+      //Connecting to Redis server on localhost 
+      Jedis jedis = new Jedis("localhost"); 
+      System.out.println("Connection to server sucessfully"); 
+      //store data in redis list 
+      // Get the stored data and print it 
+      List<String> list = jedis.keys("*"); 
+
+      for(int i = 0; i<list.size(); i++) { 
+         System.out.println("List of stored keys:: "+list.get(i)); 
+      } 
+   } 
+}
+執行上面代碼，將生成以下結果 -
+
+$javac RedisKeyJava.java 
+$java RedisKeyJava 
+Connection to server sucessfully 
+List of stored keys:: tutorial-name 
+List of stored keys:: tutorial-list
+19. PHP連接Redis
+在php程序中使用Redis之前，需要確保在機器上安裝了Redis的PHP驅動程序和PHP環境。可以先在將PHP電腦上並配置好環境。
+
+安裝
+現在，讓我們看看如何設置Redis PHP驅動程序。
+從github庫下載phpredis=> http://github.com/nicolasff/phpredis。 當下載它之後，提取文件到phpredis目錄。在Ubuntu上，安裝以下擴展。
+
+cd phpredis 
+sudo phpize 
+sudo ./configure 
+sudo make 
+sudo make install
+現在，將「modules」文件夾的內容複製並粘貼到PHP擴展目錄中，並在php.ini中添加以下行。
+
+extension = redis.so
+現在，Redis PHP安裝完成！
+
+使用連接到Redis服務器
+<?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis->connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //check whether server is running or not 
+   echo "Server is running: ".$redis->ping(); 
+?>
+當程序執行時，將產生以下結果。
+
+Connection to server sucessfully 
+Server is running: PONG
+Redis PHP字符串示例
+<?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis->connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //set the data in redis string 
+   $redis->set("tutorial-name", "Redis tutorial"); 
+   // Get the stored data and print it 
+   echo "Stored string in redis:: " .$redis→get("tutorial-name"); 
+?>
+執行上面代碼，將生成以下結果 -
+
+Connection to server sucessfully 
+Stored string in redis:: Redis tutorial
+Redis php列表示例
+<?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis->connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //store data in redis list 
+   $redis->lpush("tutorial-list", "Redis"); 
+   $redis->lpush("tutorial-list", "Mongodb"); 
+   $redis->lpush("tutorial-list", "Mysql");  
+
+   // Get the stored data and print it 
+   $arList = $redis->lrange("tutorial-list", 0 ,5); 
+   echo "Stored string in redis:: "; 
+   print_r($arList); 
+?>
+執行上面代碼，將生成以下結果 -
+
+Connection to server sucessfully 
+Stored string in redis:: 
+Redis 
+Mongodb 
+Mysql
+Redis php鍵示例
+<?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis->connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   // Get the stored keys and print it 
+   $arList = $redis->keys("*"); 
+   echo "Stored keys in redis:: " 
+   print_r($arList); 
+?>
+執行上面代碼，將生成以下結果 -
+
+Connection to server sucessfully 
+Stored string in redis:: 
+tutorial-name 
+tutorial-list
+20. C#連接Redis
+前面我們已經準備成功開?Redis服務，其端口號?6379，接下來我們就看看如何使用C#語言來操作Redis。就如MongoDB一樣，要操作Redis服務，自然就需要下載C#的客戶端，這裏通過Nuget下載了「ServiceStack.Redis」客戶端，引入成功之後，就可以使用C#來對Redis服務進行操作了。
+
+由於Redis一般是用來作?緩存的，也就是一般我們把一些不經常改變的數據通過Redis緩存起來，之後用戶的請求就不需要再訪問數據庫，而可以直接從Redis緩存中直接獲取，這樣就可以減輕數據庫服務器的壓力以及加快響應速度。既然是用來做緩存的，也就是通過指定key值來把對應Value保存起來，之後再根據key值來獲得之前緩存的值。具體的操作代碼如下所示，這裏就不過多介紹了。
+
+請參考以下代碼 -
+
+class Program
+    {
+        static void Main(string[] args)
+        {
+            //在Redis中存儲常用的5種數據類型：String,Hash,List,SetSorted set
+            var client = new RedisClient("127.0.0.1", 6379);
+            //AddString(client);
+            //AddHash(client);
+            //AddList(client);
+            //AddSet(client);
+            AddSetSorted(client);
+
+            Console.ReadLine();
+        }
+
+        private static void AddString(RedisClient client)
+        {
+            var timeOut = new TimeSpan(0,0,0,30);
+            client.Add("Test", "Learninghard", timeOut);
+            while (true)
+            {
+                if (client.ContainsKey("Test"))
+                {
+                    Console.WriteLine("String Key: Test -Value: {0}, 當前時間: {1}", client.Get<string>("Test"), DateTime.Now);
+                    Thread.Sleep(10000);
+                }
+                else
+                {
+                    Console.WriteLine("Value 已經過期了，當前時間：{0}", DateTime.Now);
+                    break;
+                }
+            }
+
+            var person = new Person() {Name = "Learninghard", Age = 26};
+            client.Add("lh", person);
+            var cachePerson = client.Get<Person>("lh");
+            Console.WriteLine("Person's Name is : {0}, Age: {1}", cachePerson.Name, cachePerson.Age);
+        }
+
+        private static void AddHash(RedisClient client)
+        {
+            if (client == null) throw new ArgumentNullException("client");
+
+            client.SetEntryInHash("HashId", "Name", "Learninghard");
+            client.SetEntryInHash("HashId", "Age", "26");
+            client.SetEntryInHash("HashId", "Sex", "男");
+
+            var hashKeys = client.GetHashKeys("HashId");
+            foreach (var key in hashKeys)
+            {
+                Console.WriteLine("HashId--Key:{0}", key);
+            }
+
+            var haskValues = client.GetHashValues("HashId");
+            foreach (var value in haskValues)
+            {
+                Console.WriteLine("HashId--Value:{0}", value);
+            }
+
+            var allKeys = client.GetAllKeys(); //獲取所有的key。
+            foreach (var key in allKeys)
+            {
+                Console.WriteLine("AllKey--Key:{0}", key);
+            }
+        }
+
+        private static void AddList(RedisClient client)
+        {
+            if (client == null) throw new ArgumentNullException("client");
+
+            client.EnqueueItemOnList("QueueListId", "1.Learnghard");  //入隊
+            client.EnqueueItemOnList("QueueListId", "2.張三");
+            client.EnqueueItemOnList("QueueListId", "3.李四");
+            client.EnqueueItemOnList("QueueListId", "4.王五");
+            var queueCount = client.GetListCount("QueueListId");
+
+            for (var i = 0; i < queueCount; i++)
+            {
+                Console.WriteLine("QueueListId出隊值：{0}", client.DequeueItemFromList("QueueListId"));   //出隊(隊列先進先出)
+            }
+
+            client.PushItemToList("StackListId", "1.Learninghard");  //入棧
+            client.PushItemToList("StackListId", "2.張三");
+            client.PushItemToList("StackListId", "3.李四");
+            client.PushItemToList("StackListId", "4.王五");
+
+            var stackCount = client.GetListCount("StackListId");
+            for (var i = 0; i < stackCount; i++)
+            {
+                Console.WriteLine("StackListId出棧值：{0}", client.PopItemFromList("StackListId"));   //出棧(棧先進後出)
+            }
+        }
+
+        //它是string類型的無序集合。set是通過hash table實現的，添加，刪除和查找,對集合我們可以取並集，交集，差集
+        private static void AddSet(RedisClient client)
+        {
+            if (client == null) throw new ArgumentNullException("client");
+
+            client.AddItemToSet("Set1001", "A");
+            client.AddItemToSet("Set1001", "B");
+            client.AddItemToSet("Set1001", "C");
+            client.AddItemToSet("Set1001", "D");
+            var hastset1 = client.GetAllItemsFromSet("Set1001");
+            foreach (var item in hastset1)
+            {
+                Console.WriteLine("Set無序集合Value:{0}", item); //出來的結果是無須的
+            }
+
+            client.AddItemToSet("Set1002", "K");
+            client.AddItemToSet("Set1002", "C");
+            client.AddItemToSet("Set1002", "A");
+            client.AddItemToSet("Set1002", "J");
+            var hastset2 = client.GetAllItemsFromSet("Set1002");
+            foreach (var item in hastset2)
+            {
+                Console.WriteLine("Set無序集合ValueB:{0}", item); //出來的結果是無須的
+            }
+
+            var hashUnion = client.GetUnionFromSets(new string[] { "Set1001", "Set1002" });
+            foreach (var item in hashUnion)
+            {
+                Console.WriteLine("求Set1001和Set1002的並集:{0}", item); //並集
+            }
+
+            var hashG = client.GetIntersectFromSets(new string[] { "Set1001", "Set1002" });
+            foreach (var item in hashG)
+            {
+                Console.WriteLine("求Set1001和Set1002的交集:{0}", item);  //交集
+            }
+
+            var hashD = client.GetDifferencesFromSet("Set1001", new string[] { "Set1002" });  //[返回存在於第一個集合，但是不存在於其他集合的數據。差集]
+            foreach (var item in hashD)
+            {
+                Console.WriteLine("求Set1001和Set1002的差集:{0}", item);  //差集
+            }
+
+        }
+
+        /*
+        sorted set 是set的一個升級版本，它在set的基礎上增加了一個順序的屬性，這一屬性在添加修改.元素的時候可以指定，
+        * 每次指定後，zset(表示有序集合)會自動重新按新的值調整順序。可以理解?有列的表，一列存 value,一列存順序。操作中key理解?zset的名字.
+        */
+        private static void AddSetSorted(RedisClient client)
+        {
+            if (client == null) throw new ArgumentNullException("client");
+
+            client.AddItemToSortedSet("SetSorted1001", "A");
+            client.AddItemToSortedSet("SetSorted1001", "B");
+            client.AddItemToSortedSet("SetSorted1001", "C");
+            var listSetSorted = client.GetAllItemsFromSortedSet("SetSorted1001");
+            foreach (var item in listSetSorted)
+            {
+                Console.WriteLine("SetSorted有序集合{0}", item);
+            }
+
+            client.AddItemToSortedSet("SetSorted1002", "A", 400);
+            client.AddItemToSortedSet("SetSorted1002", "D", 200);
+            client.AddItemToSortedSet("SetSorted1002", "B", 300);
+
+            // 升序獲取第一個值:"D"
+            var list = client.GetRangeFromSortedSet("SetSorted1002", 0, 0);
+
+            foreach (var item in list)
+            {
+                Console.WriteLine(item);
+            }
+
+            //降序獲取第一個值:"A"
+            list = client.GetRangeFromSortedSetDesc("SetSorted1002", 0, 0);
+
+            foreach (var item in list)
+            {
+                Console.WriteLine(item);
+            }
+        }
+    }
+
+    class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+    }
+如何要想查看自己操作是否成功，也可以像MongoDB那樣下載一個客戶端工具，這裏推薦一款Redis Desktop Manager。這個工具就相當於SQL Server的客戶端工具一樣。通過這款工具可以查看Redis服務器中保存的數據和對應格式。其使用也非常簡單，只需要添加一個Redis服務連接即可。該工具的下載地址?：http://pan.baidu.com/s/1sjp55Ul
